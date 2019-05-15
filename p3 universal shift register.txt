@@ -1,0 +1,63 @@
+library ieee;
+use ieee. std_logic_1164.all;
+
+entity D_FF is
+PORT( D,CLOCK: in std_logic;
+Q: out std_logic);
+end D_FF;
+ 
+architecture behavioral of D_FF is
+begin
+process(CLOCK)
+begin
+if(CLOCK='1' and CLOCK'EVENT) then
+Q <= D;
+end if;
+end process;
+end behavioral; 
+
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity mux is
+port (A,B,C,P,s1,s2: in std_logic;
+Z: out std_logic);
+end mux;
+
+architecture mymux of mux is
+begin 
+	Z<=((not s1) and (not s2) and A ) or ((not s1) and s2 and B) or (s1 and (not s2) and C) or (s1 and s2 and P);
+end mymux;
+
+library ieee;
+use ieee.std_logic_1164.all;
+entity univ_shift is
+	port (I1,I2,I3,I4,l,r,sel1,sel2,CLOCK: in std_logic;
+	O1,O2,O3,O4:inout std_logic);
+end univ_shift;
+
+architecture myshift of univ_shift is
+signal x1,x2,x3,x4 : std_logic;
+
+component mux 
+	port (A,B,C,P,s1,s2: in std_logic;
+	Z: out std_logic);
+end component;
+
+component D_FF 
+	PORT( D,CLOCK: in std_logic;
+	Q: out std_logic);
+end component;
+
+begin
+ 	m1: mux port map (O1,O2,l,I1,sel1,sel2,x1);
+	m2: mux port map (O2,O3,O1,I2,sel1,sel2,x2);
+	m3: mux port map (O3,O4,O2,I3,sel1,sel2,x3);
+	m4: mux port map (O4,r,O3,I4,sel1,sel2,x4);
+        D1: D_FF port map (x1,CLOCK,O1);
+	D2: D_FF port map (x2,CLOCK,O2);
+	D3: D_FF port map (x3,CLOCK,O3);
+	D4: D_FF port map (x4,CLOCK,O4);
+	
+end myshift;

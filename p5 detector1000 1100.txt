@@ -1,0 +1,76 @@
+library ieee;
+use ieee. std_logic_1164.all;
+entity detector is
+port(clk: in std_logic;
+inp: in std_logic;
+reset: in std_logic;
+outp : out std_logic);
+end detector;
+
+architecture behavioural of detector is
+type state is(A,B,C,D,E,F);
+signal present_state, next_state: state;
+begin
+syncronous_process : process (clk)
+begin
+if rising_edge(clk) then
+if (reset='1' )then
+present_state <= A;
+else
+present_state<=next_state;
+end if;
+end if;
+end process;
+next_state_and_output_decoder : process(present_state, inp)
+begin
+outp <= '0';
+case (present_state) is
+when A =>
+outp<='0';
+if (inp = '1') then
+next_state <= B;
+else
+next_state <= A;
+end if;
+when B =>
+outp<='0';
+if (inp = '1') then
+next_state <= C;
+else
+next_state <= C;
+end if;
+when C =>
+outp<='0';
+if (inp = '1') then
+next_state <= C;
+else
+next_state <= D;
+end if;
+when D =>
+outp<='0';
+if (inp = '1') then
+next_state <= B;
+else
+next_state <= E;
+end if;
+when E =>
+outp<='1';
+if (inp = '1') then
+next_state <= B;
+else
+next_state <= F;
+end if;
+when F =>
+outp<='1';
+if (inp = '1') then
+next_state <= B;
+else
+next_state <= A;
+end if;
+
+end case;
+
+end process;
+
+
+end behavioural;

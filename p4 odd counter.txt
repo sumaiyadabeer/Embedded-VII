@@ -1,0 +1,77 @@
+library ieee;
+use ieee. std_logic_1164.all;
+
+entity T_FlipFlop is
+port( T: in std_logic;
+Clock: in std_logic;
+Q: out std_logic);
+end T_FlipFlop;
+ 
+architecture Behavioral of T_FlipFlop is
+signal tmp: std_logic:='1';
+begin
+process (Clock)
+begin
+if Clock'event and Clock='1' then
+if T='0' then
+tmp <= tmp;
+elsif T='1' then
+tmp <= not (tmp);
+end if;
+end if;
+end process;
+Q <= tmp;
+end Behavioral;
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity mux is
+	port(X,Y: in std_logic_vector (4 downto 0);
+	sel: in std_logic;
+	Z: out std_logic_vector (4 downto 0));
+end mux;
+
+architecture my of mux is
+begin
+	Z(4)<= ((not sel)and X(4)) or (sel and Y(4)); 
+	Z(3)<= ((not sel)and X(3)) or (sel and Y(3)); 
+	Z(2)<= ((not sel)and X(2)) or (sel and Y(2)); 
+	Z(1)<= ((not sel)and X(1)) or (sel and Y(1)); 
+	Z(0)<= ((not sel)and X(0)) or (sel and Y(0)); 
+end my;
+
+library ieee;
+use ieee. std_logic_1164.all;
+
+entity counter is 
+port(Clock, reset:in std_logic;
+A: inout std_logic_vector (4 downto 0):="00101");
+end counter;
+architecture mycounter of counter is
+signal t1,t2,t3: std_logic;
+signal t:std_logic_vector (4 downto 0);
+component T_FlipFlop is
+port( T: in std_logic;
+Clock: in std_logic;
+Q: out std_logic);
+end component;
+component mux is
+port(X,Y: in std_logic_vector (4 downto 0);
+	sel: in std_logic;
+	Z: out std_logic_vector (4 downto 0));
+end component;
+
+begin
+
+	t1<= ((not A(4)) and (A(2)) and (A(1)) and A(0))or ((A(4)) and (not A(3)) and (A(1)) and A(0)) or ((A(3)) and (not A(2)) and (A(1)) and A(0));
+	t2<= A(2) and A(1) and A(0);
+	t3<= A(3) and A(2) and A(1) and A(0);
+	f1: T_FlipFlop port map ('0',Clock, t(0));
+	f2: T_FlipFlop port map ('1',Clock, t(1));
+	f3: T_FlipFlop port map (t1,Clock, t(2));
+	f4: T_FlipFlop port map (t2,Clock, t(3));
+	f5: T_FlipFlop port map (t3,Clock, t(4));
+         m: mux port map (t,"00101",reset, A);
+ 	
+end mycounter;

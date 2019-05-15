@@ -1,0 +1,40 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity fa is
+	port(A,B, Cin:in std_logic;
+        S,Cout:out std_logic);
+end fa;
+
+architecture myadd of fa is
+begin
+S<= A xor B xor Cin;
+Cout<= (A and B) or ((A xor B)and Cin);
+end myadd;
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity add_sub is
+	port (A1,A2,A3,A4,B1,B2,B3,B4,C:in std_logic;
+	S1, S2, S3, S4,Carry:out std_logic);
+end add_sub;
+
+architecture as of add_sub is
+signal C1,C2, C3,T1,T2,T3,T4: std_logic;
+component fa
+port(A,B, Cin:in std_logic;
+        S,Cout:out std_logic);
+end component;
+begin 
+	T1<=C xor B1;
+	T2<=C xor B2;
+	T3<=C xor B3;
+	T4<=C xor B4;
+
+	f1:fa port map (A1,T1,C,S1,C1);
+	f2:fa port map (A2,T2,C1,S2, C2);
+	f3:fa port map (A3,T3,C2,S3, C3);
+	f4:fa port map (A4,T4,C3,S4, Carry);
+	
+end as; 

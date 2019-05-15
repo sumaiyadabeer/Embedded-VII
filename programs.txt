@@ -1,0 +1,6 @@
+p1: 4 bit full adder
+p2: 4 bit carry select adder 
+p3: 4 bit universal shift register
+p4: 5 bit odd counter that counts from 5 till 31
+p5: sequence detector that detects sequence 1100 and 1000 and outputs 1 if it gets anyof these sequences
+p6: 8 bit sequence detector that satrts detecting if starting bits are 10 or 00 and outputs 1 if rest of the bits are your class serial number

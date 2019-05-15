@@ -1,0 +1,143 @@
+library ieee;
+use ieee. std_logic_1164.all;
+entity detect is
+port(clk: in std_logic;
+inp: in std_logic;
+reset: in std_logic;
+outp : out std_logic);
+
+end detect;
+
+architecture behavioural of detect is
+type state is(A,B,C,D,E,F,G,H,I,J);
+signal present_state, next_state: state;
+signal flag: integer:=0;
+begin
+syncronous_process : process (clk)
+begin
+if rising_edge(clk) then
+if (reset='1' )then
+present_state <= A;
+
+else
+present_state<=next_state;
+end if;
+end if;
+end process;
+next_state_and_output_decoder : process(present_state, inp,clk)
+begin
+
+outp <= '0';
+
+case (present_state) is
+when A =>
+outp<='0';
+flag<=0;
+if (inp = '1') then
+next_state <= B;
+else
+next_state <= B;
+end if;
+
+when B =>
+outp<='0';
+flag<=0;
+if (inp = '1') then
+next_state <= A;
+else
+next_state <= C;
+end if;
+
+when C =>
+outp<='0';
+if rising_edge(clk) then 
+flag<=flag+1;
+end if;
+if (inp = '0') then
+next_state <= D;
+else
+next_state <= J;
+end if;
+
+when D =>
+outp<='0';
+flag<=flag+1;
+if (inp = '0') then
+next_state <= E;
+else
+next_state <= J;
+end if;
+
+when E =>
+if rising_edge(clk) then 
+flag<=flag+1;
+end if;
+outp<='0';
+if (inp = '1') then
+next_state <= F;
+else
+next_state <= J;
+end if;
+
+when F =>
+outp<='0';
+if rising_edge(clk) then 
+flag<=flag+1;
+end if;
+if (inp = '1') then
+next_state <= G;
+else
+next_state <= J;
+end if;
+
+when G =>
+outp<='0';
+if rising_edge(clk) then 
+flag<=flag+1;
+end if;
+if (inp = '0') then
+next_state <= H;
+else
+next_state <= J;
+end if;
+
+when H =>
+outp<='0';
+if rising_edge(clk) then 
+flag<=flag+1;
+end if;
+if (inp = '1') then
+next_state <= I;
+else
+next_state <= J;
+end if;
+
+when J =>
+--outp<='0';
+if rising_edge(clk) then 
+if (flag/=6) then
+flag <= flag+1;
+--next_state<=J;
+outp<='0';
+else 
+next_state<= A;
+outp<='0';
+end if;
+end if;
+
+when I =>
+outp<='1';
+flag<=0;
+
+next_state <= A;
+
+
+
+
+end case;
+
+end process;
+
+
+end behavioural;
+

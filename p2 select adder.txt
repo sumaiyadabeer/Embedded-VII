@@ -1,0 +1,93 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity fa is
+	port(A,B, Cin:in std_logic;
+        Sum,Carry:out std_logic);
+end fa;
+
+architecture myadd of fa is
+begin
+Sum<= A xor B xor Cin;
+Carry<= (A and B) or ((A xor B)and Cin);
+end myadd;
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity rip_add is
+	port(x1,y1,x2,y2,x3,y3,S: in std_logic;
+	P1,P2,P3,C: out std_logic);
+end rip_add;
+
+architecture as of rip_add is
+signal C1,C2: std_logic;
+component fa
+port(A,B, Cin:in std_logic;
+        Sum,Carry:out std_logic);
+end component;
+begin 
+
+	f1:fa port map (x1,y1,S,P1,C1);
+	f2:fa port map (x2,y2,C1,P2, C2);
+	f3:fa port map (x3,y3,C2,P3, C);
+	
+end as; 
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity mux is
+	port(X,Y: in std_logic_vector (3 downto 0);
+	sel: in std_logic;
+	Z: out std_logic_vector (3 downto 0));
+end mux;
+
+architecture my of mux is
+begin
+	Z(3)<= ((not sel)and X(3)) or (sel and Y(3)); 
+	Z(2)<= ((not sel)and X(2)) or (sel and Y(2)); 
+	Z(1)<= ((not sel)and X(1)) or (sel and Y(1)); 
+	Z(0)<= ((not sel)and X(0)) or (sel and Y(0)); 
+end my;
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity sel_add is
+	port(A0,A1,A2,A3,B0,B1,B2,B3,C_init: in std_logic;
+	S0: out std_logic;
+	S_vec: out std_logic_vector (3 downto 0));
+end sel_add;
+
+architecture mine of sel_add is
+signal C0, Q1,Q2,Q3,C_Q,R1,R2,R3,C_R: std_logic;
+signal Q,R: std_logic_vector (3 downto 0);
+component fa
+port(A,B, Cin:in std_logic;
+        Sum,Carry:out std_logic);
+end component;
+component mux 
+	port(X,Y: in std_logic_vector (3 downto 0);
+	sel: in std_logic;
+	Z: out std_logic_vector (3 downto 0));
+end component;
+component rip_add is
+	port(x1,y1,x2,y2,x3,y3,S: in std_logic;
+	P1,P2,P3,C: out std_logic);
+end component;
+begin
+	f:fa port map (A0,B0,C_init, S0,C0);
+	rip0: rip_add port map(A1,B1,A2,B2,A3,B3,'0',Q1,Q2,Q3,C_Q);
+	rip1: rip_add port map(A1,B1,A2,B2,A3,B3,'1',R1,R2,R3,C_R);
+	Q<= C_Q&Q3&Q2&Q1;
+	R<= C_R&R3&R2&R1;
+        m1: mux port map(Q,R,C0,S_vec);
+	
+end mine;
+
+
+
+
+
+
